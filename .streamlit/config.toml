@@ -1,7 +1,7 @@
 [theme]
-primaryColor="white"
+primaryColor="blue"
 backgroundColor="#0000FF"
 secondaryBackgroundColor="#FFFFFF"
-textColor="white"
+textColor="darkgrey"
 secondarytextColor="black"
 font="Roboto"
