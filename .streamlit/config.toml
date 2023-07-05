@@ -1,7 +1,17 @@
 [theme]
-primaryColor="blue"
-backgroundColor="#0000FF"
-secondaryBackgroundColor="#FFFFFF"
-textColor="darkgrey"
-secondarytextColor="black"
-font="Roboto"
+primaryColor = "lightblue"
+backgroundColor = "#000000"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "darkgrey"
+font = "Roboto"
+
+body {
+  background-color:#000000;
+  color: white;
+  font-family: "Roboto", sans-serif;
+}
+
+.secondary-background {
+  background-color:#FFFFFF;
+}
+
