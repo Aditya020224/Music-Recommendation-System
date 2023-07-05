@@ -9,7 +9,7 @@ st.set_page_config(
     page_icon='🎶',
     menu_items={
         'Get Help': None,
-        'Report a bug': 'https://github.com/Aditya020224/Customizable-Music-Recommendation-System/issues' 
+        'Report a bug': 'https://github.com/Aditya020224/Music-Recommendation-System/issues' 
     }
 )
 
