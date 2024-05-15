@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 
 
-# Loading all the pickled data for making recommendations 
+# Loading all the pickled data for making recommendations and donot commit any unknown loadings 
 
 data = pickle.load(open('pickles/data.pkl', 'rb'))
 songs_count = data.shape[0]
