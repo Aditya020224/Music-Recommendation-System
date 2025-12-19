@@ -1,7 +1,7 @@
 numpy
 pandas
 scikit_learn
-streamlit>=1.24.0
+streamlit
 youtube_search_python
 protobuf==3.19.6
 
