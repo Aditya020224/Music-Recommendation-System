@@ -1,7 +1,8 @@
-numpy
-pandas
-scikit_learn
-streamlit
-youtube_search_python
+numpy==1.22.4
+pandas==1.4.2
+scikit_learn==1.1.1
+streamlit==1.24.0
+youtube_search_python==1.6.5
+httpx==0.23.3
 protobuf==3.19.6
 
