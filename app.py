@@ -93,22 +93,32 @@ with st.expander("▶️ CLICK TO WATCH VIDEO", expanded=False):
 st.markdown("---")
 
 # RECOMMENDATIONS
-st.header("🎯 Targeted Recommendations")
-# Use the function from your recommender.py
-recs = hybrid_recommend(st.session_state['current_song_index'], count, prioritisePopular=pop_toggle)
-
-for category, songs in recs.items():
-    st.subheader(f"✨ {category.upper()}")
-    cols = st.columns(len(songs))
-    for i, song in enumerate(songs):
-        with cols[i]:
-            st.markdown(f"""
-            <div class="song-card">
-                <b style='font-size:18px;'>{song['track_name']}</b><br>
-                <small style='color:#8B949E;'>{song['track_artist']}</small>
-            </div>
-            """, unsafe_allow_html=True)
-            # Standard button to avoid attribute errors
-            if st.button("Explore", key=f"btn_{category}_{i}"):
-                st.session_state['current_song_index'] = song['index']
-                st.experimental_rerun()
+st.header("🎯 AI Generated Playlists")
+recommendations = hybrid_recommend(st.session_state['current_song_index'], res_count, prioritisePopular=pop_pref)
+ 
+for category, songs in recommendations.items():
+    if songs: # Only show category if songs exist
+        st.subheader(f"✨ {category.upper()}")
+        
+        # We process in rows of 3 to prevent "last columns block" layout errors
+        for i in range(0, len(songs), 3):
+            cols = st.columns(3)
+            for j in range(3):
+                if i + j < len(songs):
+                    song = songs[i+j]
+                    with cols[j]:
+                        st.markdown(f"""
+                        <div class="song-card" style="padding: 15px; border-color: #30363D;">
+                            <div class="song-title" style="font-size: 16px;">{song['track_name']}</div>
+                            <div class="song-artist" style="font-size: 14px;">{song['track_artist']}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        # Navigation Button
+                        if st.button("Explore This", key=f"btn_{category}_{i+j}"):
+                            st.session_state['current_song_index'] = song['index']
+                            # Using experimental_rerun for older version compatibility
+                            try:
+                                st.rerun()
+                            except:
+                                st.experimental_rerun()
+ 
