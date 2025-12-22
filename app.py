@@ -35,7 +35,7 @@ st.markdown(
  
     /* Optional: Change text colors to match your theme */
     .stMarkdown, p, h1, h2, h3 {
-        color: #ffff8f !important;
+        color: #000000 !important;
     }
     </style>
     """,
