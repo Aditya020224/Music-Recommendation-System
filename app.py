@@ -26,11 +26,7 @@ if 'current_song_index' not in st.session_state:
 st.markdown(
     """
     <style>
-    /* Main background color */
-    .stApp {
-        background-color: #0e1117; /* Replace with your preferred HEX color */
-    }
- 
+   
     /* Make the sidebar transparent */
     [data-testid="stSidebar"] {
         background-color: rgba(255, 255, 255, 0.05); /* Very slight white tint */
