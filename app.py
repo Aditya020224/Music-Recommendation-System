@@ -29,7 +29,7 @@ st.markdown(
    
     /* Make the sidebar transparent */
     [data-testid="stSidebar"] {
-        background-color: rgba(255, 255, 255, 0.05); /* Very slight white tint */
+    
         backdrop-filter: blur(10px); /* Optional: adds a glass effect */
     }
  
