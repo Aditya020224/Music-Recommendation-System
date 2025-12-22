@@ -23,6 +23,28 @@ def change_song(index):
 if 'current_song_index' not in st.session_state:
     change_song(1255)
 
+st.markdown(
+    """
+    <style>
+    /* Main background color */
+    .stApp {
+        background-color: #0e1117; /* Replace with your preferred HEX color */
+    }
+ 
+    /* Make the sidebar transparent */
+    [data-testid="stSidebar"] {
+        background-color: rgba(255, 255, 255, 0.05); /* Very slight white tint */
+        backdrop-filter: blur(10px); /* Optional: adds a glass effect */
+    }
+ 
+    /* Optional: Change text colors to match your theme */
+    .stMarkdown, p, h1, h2, h3 {
+        color: #ffffff !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 st.sidebar.title('Select :')
 
