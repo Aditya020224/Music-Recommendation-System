@@ -1,134 +1,114 @@
 import streamlit as st
 import pandas as pd
+import google.generativeai as genai
 from recommender import hybrid_recommend, get_metadata
 from youtubesearchpython import VideosSearch
-import google.generativeai as genai
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title='Aura Music AI', page_icon='🎶', layout='wide')
 
-# --- MODERN FUTURISTIC CSS ---
+# --- HIGH VISIBILITY NEON DESIGN ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
-    
-    html, body, [data-testid="stAppViewContainer"] {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-        color: #e0e0e0;
+    /* Main Background - High Contrast */
+    .stApp {
+        background-color: #0E1117;
+        color: #FFFFFF;
     }
-    
-    /* Glassmorphism Cards */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.05);
-        padding: 20px;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        margin-bottom: 20px;
-        transition: 0.3s ease;
-    }
-    .glass-card:hover {
-        border: 1px solid #00d2ff;
-        transform: translateY(-5px);
-    }
-
-    /* Modern Buttons */
-    .stButton>button {
-        background: rgba(0, 210, 255, 0.1);
-        border: 1px solid #00d2ff;
-        color: white;
-        border-radius: 12px;
-        width: 100%;
-        transition: 0.3s;
-    }
-    .stButton>button:hover {
-        background: #00d2ff;
-        color: #0f0c29;
-    }
-
+    /* Sidebar styling */
     [data-testid="stSidebar"] {
-        background: rgba(0, 0, 0, 0.4) !important;
-        backdrop-filter: blur(20px);
+        background-color: #161B22 !important;
+        border-right: 2px solid #00D4FF;
+    }
+    /* Song Cards */
+    .song-card {
+        background: #1C2128;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #30363D;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .song-card:hover {
+        border-color: #00D4FF;
+    }
+    /* Text Colors */
+    h1, h2, h3 { color: #00D4FF !important; }
+    p { color: #C9D1D9 !important; }
+    
+    /* Button Styling */
+    .stButton>button {
+        background-color: #00D4FF !important;
+        color: #0E1117 !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        border: none !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# --- AI CONFIGURATION ---
-# This version is secure for GitHub
+# --- AI SETUP ---
 if "GEMINI_KEY" in st.secrets:
-    GEMINI_API_KEY = st.secrets["GEMINI_KEY"]
-    genai.configure(api_key=GEMINI_API_KEY)
+    genai.configure(api_key=st.secrets["GEMINI_KEY"])
     model = genai.GenerativeModel('gemini-1.5-flash')
 else:
-    st.sidebar.warning("⚠️ API Key not found in Streamlit Secrets.")
-
+    st.sidebar.error("🔑 API Key Missing in Secrets")
 
 # --- APP LOGIC ---
 if 'current_song_index' not in st.session_state:
-    st.session_state['current_song_index'] = 1255 # Default song
+    st.session_state['current_song_index'] = 1255
 
-def change_song(index):
-    st.session_state['current_song_index'] = index
-
-# --- SIDEBAR FILTERS ---
+# --- SIDEBAR ---
 with st.sidebar:
     st.title("🛡️ Aura DJ Control")
-    mode = st.radio("Discovery Mode", ["AI Mood Search", "Expert Filters", "Classic Hybrid"])
-    
-    st.divider()
-    rec_count = st.slider("Result Depth", 1, 10, 3)
-    
-    pop_toggle = st.toggle("Prioritize Popular Songs", value=True)
+    # Using checkbox instead of toggle for older version compatibility
+    pop_toggle = st.checkbox("Prioritize Popular Songs", value=True)
+    st.markdown("---")
+    count = st.select_slider("Recommendation Depth", options=[3, 5, 7, 10], value=3)
 
-# --- MAIN PAGE CONTENT ---
+# --- MAIN CONTENT ---
 current_song = get_metadata(st.session_state['current_song_index'])
 
 st.title("🎶 Aura Music Discovery")
 
 # Hero Section
-with st.container():
-    st.markdown(f"""
-    <div class="glass-card">
-        <h2 style='margin:0;'>Now Exploring: {current_song['track_name']}</h2>
-        <p style='color:#00d2ff;'>Artist: {current_song['track_artist']}</p>
-    </div>
-    """, unsafe_allow_html=True)
-    if st.button("▶️ Play Preview (Popup)"):
-        play_video_popup(current_song['track_name'], current_song['track_artist'])
+st.markdown(f"""
+<div class="song-card">
+    <h2 style='margin:0;'>NOW EXPLORING</h2>
+    <h1 style='margin:10px 0;'>{current_song['track_name']}</h1>
+    <h3 style='color:#8B949E !important;'>Artist: {current_song['track_artist']}</h3>
+</div>
+""", unsafe_allow_html=True)
 
-# DISCOVERY MODES
-if mode == "AI Mood Search":
-    st.subheader("🤖 Describe your Vibe")
-    user_input = st.text_input("How are you feeling?", placeholder="e.g. A melancholic rainy night in a jazz cafe")
-    if st.button("Generate Aura"):
-        # AI logic would process user_input here to filter your CSV
-        st.info("AI is analyzing your sentiment to tune the recommendation engine...")
+# Video Player
+with st.expander("▶️ CLICK TO WATCH VIDEO", expanded=False):
+    with st.spinner("Fetching YouTube Video..."):
+        search = VideosSearch(f"{current_song['track_name']} {current_song['track_artist']}", limit=1)
+        res = search.result()['result']
+        if res:
+            st.video(f"https://www.youtube.com/watch?v={res[0]['id']}")
+        else:
+            st.error("Video not found.")
 
-elif mode == "Expert Filters":
-    st.subheader("🎚️ Manual Sonic Tuning")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.selectbox("Select Genre", ["Pop", "Rock", "R&B", "EDM", "Latin"])
-        st.slider("Energy", 0.0, 1.0, 0.5)
-    with col2:
-        st.slider("Danceability", 0.0, 1.0, 0.5)
-        st.slider("Tempo (BPM)", 60, 200, 120)
+st.markdown("---")
 
-else:
-    # CLASSIC HYBRID SYSTEM
-    recommendations = hybrid_recommend(st.session_state['current_song_index'], rec_count, prioritisePopular=pop_toggle)
-    
-    for category, songs in recommendations.items():
-        st.write(f"### {category.title()}")
-        cols = st.columns(len(songs))
-        for idx, song in enumerate(songs):
-            with cols[idx]:
-                st.markdown(f"""
-                <div class="glass-card">
-                    <b>{song['track_name']}</b><br>
-                    <small>{song['track_artist']}</small>
-                </div>
-                """, unsafe_allow_html=True)
-                if st.button("Listen", key=f"btn_{category}_{idx}"):
-                    play_video_popup(song['track_name'], song['track_artist'])
+# RECOMMENDATIONS
+st.header("🎯 Targeted Recommendations")
+# Use the function from your recommender.py
+recs = hybrid_recommend(st.session_state['current_song_index'], count, prioritisePopular=pop_toggle)
+
+for category, songs in recs.items():
+    st.subheader(f"✨ {category.upper()}")
+    cols = st.columns(len(songs))
+    for i, song in enumerate(songs):
+        with cols[i]:
+            st.markdown(f"""
+            <div class="song-card">
+                <b style='font-size:18px;'>{song['track_name']}</b><br>
+                <small style='color:#8B949E;'>{song['track_artist']}</small>
+            </div>
+            """, unsafe_allow_html=True)
+            # Standard button to avoid attribute errors
+            if st.button("Explore", key=f"btn_{category}_{i}"):
+                st.session_state['current_song_index'] = song['index']
+                st.experimental_rerun()
