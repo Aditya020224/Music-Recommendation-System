@@ -63,18 +63,6 @@ if "GEMINI_KEY" in st.secrets:
 else:
     st.sidebar.warning("⚠️ API Key not found in Streamlit Secrets.")
 
-# --- POPUP VIDEO PLAYER (WhatsApp Style) ---
-@st.dialog("Now Playing")
-def play_video_popup(track_name, artist):
-    st.write(f"### {track_name}")
-    st.write(f"*{artist}*")
-    with st.spinner("Fetching from YouTube..."):
-        search = VideosSearch(f"{track_name} {artist}", limit=1)
-        res = search.result()['result']
-        if res:
-            st.video(f"https://www.youtube.com/watch?v={res[0]['id']}")
-        else:
-            st.error("Could not find video.")
 
 # --- APP LOGIC ---
 if 'current_song_index' not in st.session_state:
